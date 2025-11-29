@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div style="max-width: 800px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+        
+        <h2>Detalhes do Pet: {{ pet.nome }} (ID: {{ pet.id }})</h2>
+        <hr>
+
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <img src="{{ pet.foto_url }}" alt="Foto de {{ pet.nome }}" 
+                     style="width: 100%; height: auto; border-radius: 6px; border: 1px solid #eee;">
+            </div>
+
+            <div style="flex: 2;">
+                <p><strong>Nome:</strong> {{ pet.nome }}</p>
+                <p><strong>Espécie:</strong> {{ pet.especie }}</p>
+                <p><strong>Idade:</strong> {{ pet.idade }} anos</p>
+                
+                {% if pet.ong_proprietaria %}
+                    <p><strong>ONG Responsável:</strong> {{ pet.ong_proprietaria.nome_fantasia }}</p>
+                    <p><small>Contato: {{ pet.ong_proprietaria.email }}</small></p>
+                {% else %}
+                    <p><strong>ONG Responsável:</strong> Dados da ONG não disponíveis.</p>
+                {% endif %}
+
+                <p style="margin-top: 30px;"><a href="{{ url_for('main.index') }}">Voltar para a Lista</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,11 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from extensions import db
 
-# Inicializamos o objeto db aqui para ser usado pelas classes
-db = SQLAlchemy()
 
 # --- Definição das Tabelas (Classes) ---
-
 class Ong(db.Model):
     __tablename__ = 'ongs'
     id = db.Column(db.Integer, primary_key=True)

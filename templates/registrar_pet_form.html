@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
+        <h2>🐾 Teste de Cadastro de Pet</h2>
+        
+        <form method="POST" enctype="multipart/form-data">
+            
+            {{ form.csrf_token }} 
+
+            {% if form.errors %}
+                <ul style="color: red;">
+                    {% for field, errors in form.errors.items() %}
+                        <li>{{ field }}: {{ errors | join(', ') }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div style="margin-bottom: 15px;">
+                <label for="{{ form.nome.id }}">{{ form.nome.label }}:</label>
+                {{ form.nome(class_="input-text", style="width: 98%; padding: 8px;") }}
+                {% for error in form.nome.errors %}
+                    <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="{{ form.especie.id }}">{{ form.especie.label }}:</label>
+                {{ form.especie(class_="input-text", style="width: 98%; padding: 8px;") }}
+                {% for error in form.especie.errors %}
+                    <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="{{ form.idade.id }}">{{ form.idade.label }}:</label>
+                {{ form.idade(class_="input-number", style="width: 98%; padding: 8px;") }}
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label for="{{ form.foto.id }}">{{ form.foto.label }}:</label>
+                {{ form.foto() }}
+                {% for error in form.foto.errors %}
+                    <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
+                {% endfor %}
+            </div>
+            
+            {{ form.submit(style="padding: 10px 20px; background-color: green; color: white; border: none; cursor: pointer;") }}
+        </form>
+    </div>
+{% endblock %}
