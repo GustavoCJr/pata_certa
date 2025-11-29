@@ -41,3 +41,6 @@ Rota padrão exibe a página home, *index.html*.
 
 *POST* -> Recebe os dados da ONG, valida duplicidade (CNPJ/Email), hasheia a senha, registra a nova ONG e redireciona para o login.
 
+`/sobre` (metodos: GET)
+
+*GET* -> Exibe informações sobre o propósito, missão e a tecnologia do projeto PataCerta, renderizando a página `sobre.html`.
