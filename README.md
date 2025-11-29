@@ -9,7 +9,7 @@
 **MODELO DE DADOS**:
     Clique para ver [modelo de dados](models.py). (Classes e Tabelas).
 
-## ROTAS CONSTRUÍDAS
+## ROTAS PADRÃO
 
 `/` (metodos: GET)
 
@@ -44,3 +44,15 @@ Rota padrão exibe a página home, *index.html*.
 `/sobre` (metodos: GET)
 
 *GET* -> Exibe informações sobre o propósito, missão e a tecnologia do projeto PataCerta, renderizando a página `sobre.html`.
+
+## ROTAS API
+
+`/api/v1/pets` (metodos: GET)
+
+*GET* -> Retorna uma lista paginada de pets em formato JSON.
+
+**Parâmetros de Consulta (Query Params):**
+- `page`: O número da página solicitada (padrão: 1).
+- `per_page`: O número de itens por página (padrão: 10).
+
+Os pets são ordenados do mais recente para o mais antigo. A resposta inclui um objeto `pagination` com metadados (total de itens, total de páginas, etc.).

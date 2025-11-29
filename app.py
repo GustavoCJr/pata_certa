@@ -4,7 +4,8 @@ from extensions import db, login_manager
 from config import Config
 import shutil
 from views.main import main_bp
-from pathlib import Path
+from seed import seed_data
+from models import Animal, Ong, Usuario, PedidoAdocao
 
 def cleanup_development_environment():
     """Remove o DB e o conteúdo dos uploads para um estado limpo de desenvolvimento."""
@@ -56,21 +57,25 @@ def create_app(config_class=Config):
 
 
 if __name__ == '__main__':
-    cleanup_development_environment()
+    is_reloader = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
+
+    if not is_reloader:
+        cleanup_development_environment()
 
     app = create_app()
 
-    login_manager.init_app(app) 
+    login_manager.init_app(app)
     
     @login_manager.user_loader
     def load_user(user_id):
         ong = db.session.get(Ong, int(user_id))
         if ong:
             return ong     
-        return None # Retorna None se o ID não for encontrado em nenhuma tabela
-
-    with app.app_context():
-        from models import Animal, Ong, Usuario, PedidoAdocao
-        db.create_all()
+        return None
+    
+    if not is_reloader:
+        with app.app_context():
+            db.create_all()
+            seed_data(app)
     
     app.run(debug=True)
