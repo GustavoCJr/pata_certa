@@ -34,3 +34,10 @@ Rota padrão exibe a página home, *index.html*.
 `/logout` (metodos: GET)
 
 *GET* -> Encerra a sessão de login atual (`logout_user`), remove o usuário da sessão do navegador e redireciona para a página inicial (`/`).
+
+`/cadastro/ong` (metodos: GET e POST)
+
+*GET* -> Envia para a página de formulário de cadastro de ONG, `cadastro_ong_form.html`.
+
+*POST* -> Recebe os dados da ONG, valida duplicidade (CNPJ/Email), hasheia a senha, registra a nova ONG e redireciona para o login.
+
