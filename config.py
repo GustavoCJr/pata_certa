@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
 
-# Determina o diretório base do projeto
-BASE_DIR = Path(__file__).resolve().parent
-
 class Config:
+    # Determina o diretório base do projeto
+    BASE_DIR = Path(__file__).resolve().parent
+
     # ⚠️ MUITO IMPORTANTE: Defina esta chave em variáveis de ambiente na produção
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'sua-super-chave-secreta-padrao-aqui' 
 
