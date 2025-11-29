@@ -29,6 +29,8 @@ class Animal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
     especie = db.Column(db.String(20), nullable=False)
+    idade = db.Column(db.Integer, nullable=False)
+    foto_url = db.Column(db.String(80), nullable=False)
     ong_id = db.Column(db.Integer, db.ForeignKey('ongs.id'), nullable=False)
 
 class PedidoAdocao(db.Model):
