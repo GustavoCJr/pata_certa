@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, url_for, redirect, current_app, abort, flash
-from forms import RegistrarPetForm, LoginForm
+from forms import RegistrarPetForm, LoginForm, CadastroOngForm
 from models import Animal, Ong
 from extensions import db, login_manager
 from werkzeug.utils import secure_filename
@@ -119,3 +119,35 @@ def logout():
     logout_user()
     flash('Você foi desconectado.', 'info')
     return redirect(url_for('main.index'))
+
+
+@main_bp.route('/cadastro/ong', methods=['GET', 'POST'])
+def cadastro_ong():
+    # Redireciona se o usuário já estiver logado
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+
+    form = CadastroOngForm()
+    
+    if form.validate_on_submit():
+        # 1. Cria o novo objeto ONG
+        nova_ong = Ong(
+            nome_fantasia=form.nome_fantasia.data, # type: ignore
+            cnpj=form.cnpj.data, # type: ignore
+            email=form.email.data, # type: ignore
+        )
+        
+        nova_ong.set_password(form.password.data)
+        
+        db.session.add(nova_ong)
+        db.session.commit()
+        
+        login_user(nova_ong) 
+
+        flash('ONG cadastrada com sucesso! Você pode fazer login.', 'success')
+        
+        # Redireciona para a página de login
+        return redirect(url_for('main.login'))
+
+    # Se GET ou validação falhar, exibe o formulário
+    return render_template('cadastro_ong_form.html', form=form)
