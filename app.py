@@ -1,6 +1,6 @@
 from flask import Flask
 import os
-from extensions import db 
+from extensions import db, login_manager
 from config import Config
 import shutil
 from views.main import main_bp
@@ -8,7 +8,6 @@ from pathlib import Path
 
 def cleanup_development_environment():
     """Remove o DB e o conteúdo dos uploads para um estado limpo de desenvolvimento."""
-    
     db_path = Config.DATABASE_PATH
     upload_dir = Config.UPLOAD_FOLDER
     instance_dir = Config.BASE_DIR / 'instance'  # O caminho da pasta instance
@@ -16,13 +15,11 @@ def cleanup_development_environment():
     # 1. Remove o arquivo DB se ele existir
     if os.path.exists(db_path):
         os.remove(db_path)
-        print(f"🧹 Banco de dados removido: {db_path}")
 
     # 2. Remove a pasta de uploads se ela existir
     if os.path.exists(upload_dir):
         # Remove a pasta e todo o seu conteúdo
         shutil.rmtree(upload_dir) 
-        print(f"🧹 Pasta de uploads removida: {upload_dir}")
 
     # 3. CRIAÇÃO GARANTIDA DE DIRETÓRIOS (O FIX)
     # Garante que a pasta instance exista
@@ -32,7 +29,8 @@ def cleanup_development_environment():
     if not os.path.exists(upload_dir):
         os.makedirs(upload_dir)
 
-    print(f"✅ Diretórios '{instance_dir}' e '{upload_dir}' garantidos.")
+
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -54,13 +52,23 @@ def create_app(config_class=Config):
 
     return app
 
+
+
+
 if __name__ == '__main__':
-    print("--- INICIANDO LIMPEZA DO AMBIENTE DEV ---")
     cleanup_development_environment()
-    print("------------------------------------------")
 
     app = create_app()
+
+    login_manager.init_app(app) 
     
+    @login_manager.user_loader
+    def load_user(user_id):
+        ong = db.session.get(Ong, int(user_id))
+        if ong:
+            return ong     
+        return None # Retorna None se o ID não for encontrado em nenhuma tabela
+
     with app.app_context():
         from models import Animal, Ong, Usuario, PedidoAdocao
         db.create_all()

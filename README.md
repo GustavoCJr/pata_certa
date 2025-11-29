@@ -1,5 +1,8 @@
 # INSTRUÇÕES
 
+**INSTALAR AS DEPENDÊNCIAS**:
+    utilize o comando `pip install -r requirements.txt`.
+
 **COMANDO DE EXECUÇÃO**:
     `python app.py` para executar a aplicação.
 
@@ -21,3 +24,13 @@ Rota padrão exibe a página home, *index.html*.
 *GET* -> Envia para a página formulário de registrar um pet, *registrar_pet_form.html*.
 
 *POST* -> Espera os valores de **Animal** (ver [modelo de dados](models.py)), registra na tabela *animais* do banco de dados os valores, e redireciona para a página de exibição do animal (rota: `/exibir_pet/<ID_Gerado>`).
+
+`/login` (metodos: GET e POST)
+
+*GET* -> Envia para a página de formulário de login da ONG, `login_form.html`.
+
+*POST* -> Recebe as credenciais (*e-mail* e *senha*), verifica a autenticidade da ONG no banco de dados e, se for bem-sucedido, inicia a sessão de login (`login_user`). Caso contrário, exibe uma mensagem de erro na tela.
+
+`/logout` (metodos: GET)
+
+*GET* -> Encerra a sessão de login atual (`logout_user`), remove o usuário da sessão do navegador e redireciona para a página inicial (`/`).

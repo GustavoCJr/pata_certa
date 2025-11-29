@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        
+        <h2 style="text-align: center; color: #333;">🔐 Login da ONG</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="background-color: {% if category == 'danger' %}#f8d7da{% elif category == 'success' %}#d4edda{% else %}#fff3cd{% endif %}; 
+                                color: {% if category == 'danger' %}#721c24{% elif category == 'success' %}#155724{% else %}#856404{% endif %}; 
+                                border: 1px solid {% if category == 'danger' %}#f5c6cb{% elif category == 'success' %}#c3e6cb{% else %}#ffeeba{% endif %}; 
+                                padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            {{ form.csrf_token }} 
+
+            <div style="margin-bottom: 15px;">
+                <label for="{{ form.email.id }}" style="display: block; margin-bottom: 5px; font-weight: bold;">{{ form.email.label }}:</label>
+                {{ form.email(style="width: 98%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;") }}
+                {% for error in form.email.errors %}
+                    <span style="color: red; font-size: 0.9em; display: block;">* {{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="{{ form.password.id }}" style="display: block; margin-bottom: 5px; font-weight: bold;">{{ form.password.label }}:</label>
+                {{ form.password(style="width: 98%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;") }}
+                {% for error in form.password.errors %}
+                    <span style="color: red; font-size: 0.9em; display: block;">* {{ error }}</span>
+                {% endfor %}
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                {{ form.remember_me() }} {{ form.remember_me.label }}
+            </div>
+
+            {{ form.submit(style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px;") }}
+        </form>
+    </div>
+{% endblock %}

@@ -1,7 +1,7 @@
 # forms.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, validators
-from flask_wtf.file import FileField, FileAllowed, FileRequired 
+from wtforms import StringField, IntegerField, SubmitField, validators, PasswordField, BooleanField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 
 class RegistrarPetForm(FlaskForm):
@@ -16,3 +16,9 @@ class RegistrarPetForm(FlaskForm):
 
     
     submit = SubmitField('Registrar Pet')
+
+class LoginForm(FlaskForm):
+    email = StringField('E-mail', [validators.DataRequired(), validators.Email()])
+    password = PasswordField('Senha', [validators.DataRequired()])
+    remember_me = BooleanField('Lembrar de mim')
+    submit = SubmitField('Entrar')
