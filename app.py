@@ -4,6 +4,7 @@ from extensions import db, login_manager
 from config import Config
 import shutil
 from views.main import main_bp
+from views.api_routes import api_bp
 from seed import seed_data
 from models import Animal, Ong, Usuario, PedidoAdocao
 
@@ -49,7 +50,8 @@ def create_app(config_class=Config):
     if not os.path.exists(upload_path):
         os.makedirs(upload_path)
 
-    app.register_blueprint(main_bp) 
+    app.register_blueprint(main_bp)
+    app.register_blueprint(api_bp)
 
     return app
 
