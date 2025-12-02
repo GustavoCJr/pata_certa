@@ -251,7 +251,7 @@ def adocao():
     total_pets = db.session.query(Animal).count()
     total_pages = ceil(total_pets / PER_PAGE) if total_pets else 1
 
-    # Ajusta page caso inválido
+    # Ajusta page caso seja inválido
     if page < 1:
         page = 1
     if page > total_pages:
