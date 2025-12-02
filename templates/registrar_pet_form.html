@@ -1,51 +1,85 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div style="max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
-        <h2>🐾 Teste de Cadastro de Pet</h2>
-        
-        <form method="POST" enctype="multipart/form-data">
-            
-            {{ form.csrf_token }} 
 
-            {% if form.errors %}
-                <ul style="color: red;">
-                    {% for field, errors in form.errors.items() %}
-                        <li>{{ field }}: {{ errors | join(', ') }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+<form action="/registrar_pet" method="POST" enctype="multipart/form-data">
 
-            <div style="margin-bottom: 15px;">
-                <label for="{{ form.nome.id }}">{{ form.nome.label }}:</label>
-                {{ form.nome(class_="input-text", style="width: 98%; padding: 8px;") }}
-                {% for error in form.nome.errors %}
-                    <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
-                {% endfor %}
-            </div>
+    {{ form.csrf_token }}
 
-            <div style="margin-bottom: 15px;">
-                <label for="{{ form.especie.id }}">{{ form.especie.label }}:</label>
-                {{ form.especie(class_="input-text", style="width: 98%; padding: 8px;") }}
-                {% for error in form.especie.errors %}
-                    <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
-                {% endfor %}
-            </div>
+    <div class="formulario">
 
-            <div style="margin-bottom: 15px;">
-                <label for="{{ form.idade.id }}">{{ form.idade.label }}:</label>
-                {{ form.idade(class_="input-number", style="width: 98%; padding: 8px;") }}
-            </div>
+        <!-- Coluna esquerda -->
+        <div class="col-esquerda">
 
-            <div style="margin-bottom: 20px;">
-                <label for="{{ form.foto.id }}">{{ form.foto.label }}:</label>
-                {{ form.foto() }}
-                {% for error in form.foto.errors %}
-                    <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
-                {% endfor %}
-            </div>
-            
-            {{ form.submit(style="padding: 10px 20px; background-color: green; color: white; border: none; cursor: pointer;") }}
-        </form>
+            <!-- Imagem que será substituída -->
+            <label for="{{ form.foto.id }}" style="cursor:pointer;">
+                <img id="preview" src="{{ url_for('static', filename='images/carregar_foto.png') }}" class="foto_animal">
+            </label>
+
+            <!-- Input de foto (Flask-WTF) escondido -->
+            {{ form.foto(id=form.foto.id, style="display:none;", accept="image/*") }}
+
+            {% for error in form.foto.errors %}
+                <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
+            {% endfor %}
+
+        </div>
+
+        <!-- Coluna direita -->
+        <div class="col-direita">
+
+            <strong>
+
+            <p>
+                <label for="{{ form.nome.id }}">Nome do animal:</label>
+                {{ form.nome(id=form.nome.id, class_="input-text") }}
+            </p>
+            {% for error in form.nome.errors %}
+                <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
+            {% endfor %}
+
+            <br>
+
+            <p>
+                <label for="{{ form.especie.id }}">Espécie:</label>
+                {{ form.especie(id=form.especie.id, class_="input-text") }}
+            </p>
+            {% for error in form.especie.errors %}
+                <span style="color: red; font-size: 0.8em;">* {{ error }}</span>
+            {% endfor %}
+
+            <br>
+
+            <p>
+                <label for="{{ form.idade.id }}">Idade:</label>
+                {{ form.idade(id=form.idade.id, class_="input-number") }}
+            </p>
+
+            <br>
+
+            <p>
+                {{ form.submit(class_="buttonteste") }}
+            </p>
+
+            </strong>
+
+        </div>
+
     </div>
+
+</form>
+
+<!-- Pré-visualização da imagem -->
+<script>
+    const fileInput = document.getElementById('{{ form.foto.id }}');
+    const previewImg = document.getElementById('preview');
+
+    fileInput.addEventListener('change', function(event) {
+        const arquivo = event.target.files[0];
+        if (arquivo) {
+            previewImg.src = URL.createObjectURL(arquivo);
+        }
+    });
+</script>
+
 {% endblock %}

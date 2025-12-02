@@ -17,7 +17,8 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index():
     # Rotas do Blueprint usam main.index no url_for
-    return render_template('index.html')
+    pets = db.session.query(Animal).order_by(func.random()).limit(3).all()
+    return render_template('index.html', pets=pets)
 
 
 @main_bp.route('/sobre')
@@ -112,7 +113,25 @@ def login():
         
     return render_template('login_form.html', form=form)
 
+@main_bp.route('/api/logged')
+def api_logged():
+    """
+    Retorna se o usuário está autenticado e um campo 'username' seguro
+    (tenta 'username', depois 'name', depois 'email', senão None).
+    """
+    if not current_user.is_authenticated:
+        return jsonify({"logged": False, "username": None})
 
+    # tenta obter um nome de exibição de forma segura
+    username = getattr(current_user, 'username', None)
+    if not username:
+        username = getattr(current_user, 'name', None)
+    if not username:
+        username = getattr(current_user, 'email', None)
+
+    return jsonify({"logged": True, "username": username})
+
+    
 @main_bp.route('/logout')
 @login_required # Garante que só usuários logados possam deslogar
 def logout():
@@ -220,3 +239,93 @@ def get_pets_paginated_json():
             'has_prev': page > 1
         }
     })
+@main_bp.route('/adocao')
+def adocao():
+    """Página de pets para adoção com paginação."""
+    from math import ceil
+
+    page = request.args.get('page', 1, type=int)
+    PER_PAGE = 16
+
+    # Conta total de pets
+    total_pets = db.session.query(Animal).count()
+    total_pages = ceil(total_pets / PER_PAGE) if total_pets else 1
+
+    # Ajusta page caso inválido
+    if page < 1:
+        page = 1
+    if page > total_pages:
+        page = total_pages
+
+    # Busca paginada
+    pets = (db.session.query(Animal)
+            .order_by(Animal.id.desc())
+            .offset((page - 1) * PER_PAGE)
+            .limit(PER_PAGE)
+            .all())
+
+    return render_template(
+        "adocao.html",
+        pets=pets,
+        page=page,
+        total_pages=total_pages
+    )
+from sqlalchemy import func
+
+# exemplo dentro do blueprint main_bp
+from sqlalchemy import func
+
+@main_bp.route('/debug/random')
+def debug_random():
+    from sqlalchemy import func
+    pets = db.session.query(Animal).order_by(func.random()).limit(3).all()
+    return {
+        "pets": [
+            {
+                "id": p.id,
+                "nome": p.nome,
+                "especie": p.especie,
+                "idade": p.idade,
+                "foto_url": p.foto_url
+            }
+            for p in pets
+        ]
+    }
+# lista as ONGs com paginação simples
+@main_bp.route('/ongs')
+def ongs():
+    """
+    Lista as ONGs cadastradas.
+    Querystring opcional: ?page=1
+    """
+    from math import ceil
+
+    page = request.args.get('page', 1, type=int)
+    PER_PAGE = 12  # ONGs por página
+
+    total = db.session.query(Ong).count()
+    total_pages = ceil(total / PER_PAGE) if total else 1
+
+    if page < 1:
+        page = 1
+    if page > total_pages:
+        page = total_pages
+
+    ongs = (
+        db.session.query(Ong)
+        .order_by(Ong.id.desc())
+        .offset((page - 1) * PER_PAGE)
+        .limit(PER_PAGE)
+        .all()
+    )
+
+    return render_template('ongs.html', ongs=ongs, page=page, total_pages=total_pages)
+from flask import abort, render_template
+
+@main_bp.route('/ong/<int:ong_id>')
+def exibir_ong(ong_id):
+    # busca a ONG pelo id
+    ong = db.session.query(Ong).get(ong_id)  # ou use .filter_by(id=ong_id).first()
+    if ong is None:
+        abort(404)
+    return render_template('exibir_ong.html', ong=ong)

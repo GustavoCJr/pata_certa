@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<section class="adocao-container">
+
+    <h1 class="section-title">Pets para Adoção</h1>
+
+    <div class="pets-grid">
+
+        {% for pet in pets %}
+        <article class="pet-card">
+
+            <a href="{{ url_for('main.exibir_pet', pet_id=pet.id) }}" class="pet-link">
+                <div class="pet-image">
+                    <img src="{{ pet.foto_url }}" alt="{{ pet.nome }}">
+                </div>
+
+                <div class="pet-info">
+                    <h3>{{ pet.nome }}</h3>
+                    <p>{{ pet.especie }} • {{ pet.idade }} anos</p>
+                </div>
+            </a>
+
+        </article>
+        {% endfor %}
+
+    </div>
+
+    <!-- PAGINAÇÃO -->
+    <nav class="pagination">
+        <ul>
+
+            <!-- anterior -->
+            {% if page > 1 %}
+            <li><a href="{{ url_for('main.adocao', page=page-1) }}">Anterior</a></li>
+            {% else %}
+            <li class="disabled">Anterior</li>
+            {% endif %}
+
+            <!-- números -->
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                    <li class="active">{{ p }}</li>
+                {% else %}
+                    <li><a href="{{ url_for('main.adocao', page=p) }}">{{ p }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- próximo -->
+            {% if page < total_pages %}
+            <li><a href="{{ url_for('main.adocao', page=page+1) }}">Próximo</a></li>
+            {% else %}
+            <li class="disabled">Próximo</li>
+            {% endif %}
+
+        </ul>
+    </nav>
+
+</section>
+
+{% endblock %}

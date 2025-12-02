@@ -14,15 +14,26 @@
             <a href="/"><img class="logo" src="/static/images/logo.png"></img></a>
             <nav>
                  <ul>
+                    <!-- injete a rota no template (opcional, mas já colocamos no layout corrigido) -->
+                    <script>const ROUTE_API_LOGGED = "{{ url_for('main.api_logged') }}";</script>
+                    <!-- links no header (inicie com .hidden quando for mostrado apenas depois da verificação) -->
                     <li><a href="/adocao">Adoção</a></li>
                     <li><a href="/ongs">ONGs</a></li>
                     <li><a href="/pets_desaparecidos">Pets Desaparecidos</a></li>
-                    <li><a href="/registrar_pet">Teste registrar pet</a></li>
-                    <li><a href="/login">Teste login</a></li>
-                    <li><a href="/cadastro/ong">Teste cadastro ONG</a></li>
+                    <li class="linksLogado hidden"><a href="/registrar_pet">Registrar pet</a></li>
+                    <li class="linksDeslogado"><a href="/login">Login</a></li>
+                    <li class="linksDeslogado"><a href="/cadastro/ong">Cadastrar ONG</a></li>
+                    
                 </ul>
             </nav>
-            <img src="/static/images/iconlogin.png" class="menu-button"/>  
+           <nav>
+                <ul>
+                    <li class="linksLogado hidden"><a href="/logout"><img src="/static/images/sair.png" alt="logout" class="menu-button"></a></li>
+                </ul>
+            </nav>
+            <!-- carregue o JS -->
+            <script src="{{ url_for('static', filename='script/script.js') }}" defer></script>
+            <!-- Imagem retirada <img src="/static/images/iconlogin.png" class="menu-button"/> --> 
         </div>
     </header>
 
@@ -36,12 +47,13 @@
         <div class="header-inner-content">
         <div class="header-bottom-side exclusive-container">
             <div class="header-bottom-side-right">
-                <h2>Quem somos nós</h2>
-                <p>Somos uma equipe com a ideia de ajudar animais de rua a encontrarem um bom lar e uma boa vida, se quiserem conhecer mais sobre nós clique no saiba mais</p>
+                <h2 class="titulo-roda">Quem somos nós</h2>
+                <br>
+                <p class="texto-roda">Somos uma equipe com a ideia de ajudar animais de rua a encontrarem um bom lar e uma boa vida, se quiserem conhecer mais sobre nós clique no saiba mais</p>
                 <button>Saiba mais &#8594;</button>
             </div>
             <div class="header-bottom-side-left">
-                <p>  Instagram | Facebook | WhatsApp </p>    
+                <strong><p>  Instagram | Facebook | WhatsApp </p></strong>
                 <p>  Parceiros: ONG Vida Animal • PetCare • AdoteJá </p>
                 <p>© 2025 AdotaPet — Transformando carinho em novas histórias. </p>
             </div>
