@@ -131,11 +131,32 @@ def cadastro_ong():
     form = CadastroOngForm()
     
     if form.validate_on_submit():
-        # 1. Cria o novo objeto ONG
+        # 1. Criação da imagem
+        foto_url = None
+        if form.foto.data: # Verifica se um arquivo foi enviado
+            f = form.foto.data 
+            original_filename = secure_filename(f.filename)
+            file_ext = os.path.splitext(original_filename)[1]
+            filename = str(uuid.uuid4()) + file_ext
+
+            caminho_salvamento = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+
+            # Processamento da imagem
+            imagem = Image.open(f)
+            tamanho_maximo = (600, 600)
+            
+            imagem.thumbnail(tamanho_maximo) 
+            imagem.save(caminho_salvamento, optimize=True, quality=85) # Compressão um pouco menor
+            
+            foto_url = url_for('static', filename=f'uploads/{filename}')
+
+        # 2. Cria o novo objeto ONG
         nova_ong = Ong(
             nome_fantasia=form.nome_fantasia.data, # type: ignore
             cnpj=form.cnpj.data, # type: ignore
             email=form.email.data, # type: ignore
+            telefone=form.telefone.data, # type: ignore
+            foto_url=foto_url, # type: ignore
         )
         
         nova_ong.set_password(form.password.data)

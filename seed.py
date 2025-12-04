@@ -1,31 +1,38 @@
 # seed.py
 
 from extensions import db
-from models import Ong, Animal
-from werkzeug.security import generate_password_hash # Importa para garantir que o hashing esteja disponível
+from models import Ong, Animal # Garanta que você importou o modelo Animal
+from werkzeug.security import generate_password_hash
+from sqlalchemy import select
 
-# Dados de teste para ONGs
+# Dados de teste para ONGs (incluindo os novos campos: telefone e foto_url)
 ONG_DATA = [
     {
         'nome_fantasia': 'ONG PataCerta Teste',
         'cnpj': '11111111111111',
         'email': 'teste@ong1.org',
-        'password': 'senha123', # Senha conhecida para teste de login
-        'id_manual': 1 # Define ID para facilitar o relacionamento
+        'password': 'senha123', 
+        'id_manual': 1,
+        'telefone': '11987654321', # NOVO
+        'foto_url': '/static/images/logos/ong1.png' # NOVO
     },
     {
         'nome_fantasia': 'ONG Amigos dos Bichos',
         'cnpj': '22222222222222',
         'email': 'contato@ong2.org',
         'password': 'senha123',
-        'id_manual': 2
+        'id_manual': 2,
+        'telefone': '21987654321', # NOVO
+        'foto_url': '/static/images/logos/ong2.png'
     },
     {
         'nome_fantasia': 'ONG Viva a Patinha',
         'cnpj': '33333333333333',
         'email': 'ajuda@ong3.org',
         'password': 'senha123',
-        'id_manual': 3
+        'id_manual': 3,
+        'telefone': '31987654321', # NOVO
+        'foto_url': '/static/images/logos/ong3.png'
     }
 ]
 
@@ -58,18 +65,20 @@ def seed_data(app):
     """Cria dados iniciais para o ambiente de desenvolvimento."""
     
     with app.app_context():
-        # Se as tabelas estiverem vazias, povoa o DB
-        if db.session.query(Ong).count() == 0:
+        # Verifica se já há dados (para evitar duplicatas)
+        if db.session.scalar(select(db.func.count(Ong.id))) == 0:
             print("\n--- INSERINDO DADOS DE TESTE (SEED) ---")
             
             # --- 1. CRIAÇÃO DAS ONGS ---
             for data in ONG_DATA:
                 # Cria a ONG
                 ong = Ong(
-                    id=data['id_manual'], # Define o ID para garantir o FK
+                    id=data['id_manual'],
                     nome_fantasia=data['nome_fantasia'],
                     cnpj=data['cnpj'],
                     email=data['email'],
+                    telefone=data['telefone'], # <-- NOVO
+                    foto_url=data['foto_url'], # <-- NOVO
                 )
                 # Define a senha com hashing
                 ong.set_password(data['password'])
@@ -82,7 +91,6 @@ def seed_data(app):
             # --- 2. CRIAÇÃO DOS PETS ---
             for i, data in enumerate(PET_DATA):
                 # Usamos um URL de imagem simples para teste
-                # Em um projeto real, você usaria url_for('static', filename=...)
                 foto_url = f"/static/images/default/pet{i+1}.png"
                 
                 pet = Animal(

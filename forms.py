@@ -30,6 +30,11 @@ class CadastroOngForm(FlaskForm):
     cnpj = StringField('CNPJ', [validators.DataRequired(), validators.Length(min=14, max=14, message="O CNPJ deve ter 14 dígitos.")])
     email = StringField('E-mail', [validators.DataRequired(), validators.Email()])
     
+    telefone = StringField('Telefone de Contato', [validators.DataRequired(), validators.Length(min=10, max=20, message="Telefone inválido.")])
+    foto = FileField('Logo da ONG (Opcional)', validators=[
+        FileAllowed(['jpg', 'png', 'jpeg'], 'Apenas imagens JPG, PNG ou JPEG são permitidas.')
+    ])
+
     password = PasswordField('Senha', [
         validators.DataRequired(),
         validators.Length(min=6, message="A senha deve ter pelo menos 6 caracteres."),
@@ -39,7 +44,7 @@ class CadastroOngForm(FlaskForm):
     
     submit = SubmitField('Cadastrar ONG')
     
-    # ⚠️ VALIDADOR PERSONALIZADO: Garante que o CNPJ ou E-mail não estão duplicados
+    # VALIDADOR PERSONALIZADO: Garante que o CNPJ ou E-mail não estão duplicados
     def validate_cnpj(self, cnpj):
         from models import Ong
         from extensions import db
