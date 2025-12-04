@@ -5,6 +5,9 @@
 <section class="adocao-container">
 
     <h1 class="section-title">Pets para Adoção</h1>
+    <br>
+    <hr>
+    <br>
 
     <div class="pets-grid">
 
@@ -40,19 +43,18 @@
 
             <!-- números -->
             {% for p in range(1, total_pages + 1) %}
-                {% if p == page %}
-                    <li class="active">{{ p }}</li>
-                {% else %}
-                    <li><a href="{{ url_for('main.adocao', page=p) }}">{{ p }}</a></li>
-                {% endif %}
+            {% if p == page %}
+            <li class="active">{{ p }}</li>
+            {% else %}
+            <li><a href="{{ url_for('main.adocao', page=p) }}">{{ p }}</a></li>
+            {% endif %}
             {% endfor %}
 
             <!-- próximo -->
-            {% if page < total_pages %}
-            <li><a href="{{ url_for('main.adocao', page=page+1) }}">Próximo</a></li>
-            {% else %}
-            <li class="disabled">Próximo</li>
-            {% endif %}
+            {% if page < total_pages %} <li><a href="{{ url_for('main.adocao', page=page+1) }}">Próximo</a></li>
+                {% else %}
+                <li class="disabled">Próximo</li>
+                {% endif %}
 
         </ul>
     </nav>
