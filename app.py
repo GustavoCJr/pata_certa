@@ -77,6 +77,6 @@ if __name__ == '__main__':
     if not is_reloader:
         with app.app_context():
             db.create_all()
-            # seed_data(app)
+            seed_data(app)
     
     app.run(debug=True)
