@@ -1,12 +1,12 @@
 from flask import Flask
 import os
-from extensions import db, login_manager
+from extensions import db
+from flask_login import LoginManager
 from config import Config
-import shutil
 from views.main import main_bp
 from views.api_routes import api_bp
 from seed import seed_data
-from models import Animal, Ong, Usuario, PedidoAdocao
+from models import Ong
 
 """
 def cleanup_development_environment():
@@ -38,45 +38,44 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-
+    # Inicializa banco
     db.init_app(app)
 
-    instance_path = os.path.dirname(app.config['SQLALCHEMY_DATABASE_URI'].replace('sqlite:///', ''))
-    upload_path = app.config['UPLOAD_FOLDER']
+    # Inicializa LoginManager
+    login_manager = LoginManager()
+    login_manager.login_view = "login"
+    login_manager.init_app(app)
 
-    if not os.path.exists(instance_path):
-        os.makedirs(instance_path)
+    @login_manager.user_loader
+    def load_user(user_id):
+        return db.session.get(Ong, int(user_id))
 
-    if not os.path.exists(upload_path):
-        os.makedirs(upload_path)
+    # Garante que pastas existam (mesmo usando PostgreSQL no Render)
+    upload_path = app.config.get("UPLOAD_FOLDER")
+    if upload_path and not os.path.exists(upload_path):
+        os.makedirs(upload_path, exist_ok=True)
 
+    # Registra rotas
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp)
 
-    return app
-
-app = create_app()
-
-if __name__ == '__main__':
-    is_reloader = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
-    """
-    if not is_reloader:
-        cleanup_development_environment()
-    """
-    app = create_app()
-
-    login_manager.init_app(app)
-    
-    @login_manager.user_loader
-    def load_user(user_id):
-        ong = db.session.get(Ong, int(user_id))
-        if ong:
-            return ong     
-        return None
-    
-    if not is_reloader:
+    # Cria tabelas apenas localmente, não em produção
+    if app.config.get("ENV") == "development":
         with app.app_context():
             db.create_all()
             seed_data(app)
-    
+
+    return app
+
+
+# Instância usada pelo Gunicorn no Render
+app = create_app()
+
+
+if __name__ == "__main__":
+    # Modo debug local
+    with app.app_context():
+        db.create_all()
+        seed_data(app)
+
     app.run(debug=True)
