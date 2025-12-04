@@ -14,19 +14,15 @@
         <a href="{{ url_for('main.exibir_ong', ong_id=ong.id) }}" class="ong-link">
           <div class="ong-logo-wrap">
             {% if ong.logo_url %}
-              <img src="{{ ong.logo_url }}" alt="{{ ong.nome }}">
+            <img src="{{ ong.logo_url }}" alt="{{ ong.nome }}">
             {% else %}
-              <img src="{{ url_for('static', filename='images/ong-placeholder.png') }}" alt="logo">
+            <img src="{{ url_for('static', filename='images/ong-placeholder.png') }}" alt="logo">
             {% endif %}
           </div>
 
           <div class="ong-info">
             <h3 class="ong-name">{{ ong.nome }}</h3>
-            {% if ong.descricao %}
-              <p class="ong-desc">{{ ong.descricao | truncate(120, True, '...') }}</p>
-            {% else %}
-              <p class="ong-desc muted">Sem descrição.</p>
-            {% endif %}
+            <p class="ong-desc">{{ ong.nome_fantasia | truncate(120, True, '...') }}</p>
             <p class="ong-meta">
               {{ ong.cidade or '' }}{% if ong.estado %} • {{ ong.estado }}{% endif %}
             </p>
@@ -40,29 +36,28 @@
     <nav class="pagination" aria-label="Paginação ONGs">
       <ul>
         {% if page > 1 %}
-          <li><a href="{{ url_for('main.ongs', page=page-1) }}">Anterior</a></li>
+        <li><a href="{{ url_for('main.ongs', page=page-1) }}">Anterior</a></li>
         {% else %}
-          <li class="disabled"><span>Anterior</span></li>
+        <li class="disabled"><span>Anterior</span></li>
         {% endif %}
 
         {%- for p in range(1, total_pages + 1) -%}
-          {% if p == page %}
-            <li class="active"><span>{{ p }}</span></li>
-          {% else %}
-            <li><a href="{{ url_for('main.ongs', page=p) }}">{{ p }}</a></li>
-          {% endif %}
+        {% if p == page %}
+        <li class="active"><span>{{ p }}</span></li>
+        {% else %}
+        <li><a href="{{ url_for('main.ongs', page=p) }}">{{ p }}</a></li>
+        {% endif %}
         {%- endfor -%}
 
-        {% if page < total_pages %}
-          <li><a href="{{ url_for('main.ongs', page=page+1) }}">Próximo</a></li>
-        {% else %}
+        {% if page < total_pages %} <li><a href="{{ url_for('main.ongs', page=page+1) }}">Próximo</a></li>
+          {% else %}
           <li class="disabled"><span>Próximo</span></li>
-        {% endif %}
+          {% endif %}
       </ul>
     </nav>
 
     {% else %}
-      <p>Nenhuma ONG cadastrada no momento.</p>
+    <p>Nenhuma ONG cadastrada no momento.</p>
     {% endif %}
 
   </div>

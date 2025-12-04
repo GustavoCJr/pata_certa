@@ -1,20 +1,22 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div style="max-width: 800px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-        
-        <h2>Ong: {{ ong.nome_fantasia }} (ID: {{ ong.id }})</h2>
-        <hr>
+<div style="max-width: 800px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
 
-        <div style="display: flex; gap: 20px;">
+    <h2>Ong: {{ ong.nome_fantasia }}</h2>
+    <br>
+    <hr>
+    <br>
 
-            <div style="flex: 2;">
-                <p><strong>nome_fantasia:</strong> {{ ong.nome_fantasia }}</p>
-                <p><strong>cnpj:</strong> {{ ong.cnpj }}</p>
-                <p><strong>email:</strong> {{ ong.email }}</p>
+    <div style="display: flex; gap: 20px;">
 
-                <p style="margin-top: 30px;"><a href="{{ url_for('main.ongs') }}">Voltar para a Lista</a></p>
-            </div>
+        <div style="flex: 2;" class="pet_card">
+            <p><strong>nome_fantasia:</strong> {{ ong.nome_fantasia }}</p>
+            <p><strong>cnpj:</strong> {{ ong.cnpj }}</p>
+            <p><strong>email:</strong> {{ ong.email }}</p>
+
+            <p style="margin-top: 30px;"><a href="{{ url_for('main.ongs') }}">Voltar para a Lista</a></p>
         </div>
     </div>
+</div>
 {% endblock %}

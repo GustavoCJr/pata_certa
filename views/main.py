@@ -11,7 +11,7 @@ from PIL import Image
 from flask_login import login_user, logout_user, current_user, login_required
 
 # 1. Cria o Blueprint (o agrupador de rotas)
-main_bp = Blueprint('main', __name__) 
+main_bp = Blueprint('main', __name__)
 
 
 @main_bp.route('/')
@@ -34,35 +34,36 @@ def registrar_pet():
     # verifica se é valido o formulario enviado
     if form.validate_on_submit():
         # 1. Lógica de Upload
-        f = form.foto.data 
+        f = form.foto.data
         original_filename = secure_filename(f.filename)
         file_ext = os.path.splitext(original_filename)[1]
         filename = str(uuid.uuid4()) + file_ext
 
-        caminho_salvamento = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        caminho_salvamento = os.path.join(
+            current_app.config['UPLOAD_FOLDER'], filename)
 
         imagem = Image.open(f)
-        
+
         tamanho_maximo = (800, 800)
-        
-        imagem.thumbnail(tamanho_maximo) 
-        
+
+        imagem.thumbnail(tamanho_maximo)
+
         imagem.save(caminho_salvamento, optimize=True, quality=75)
-        
-        foto_url = url_for('static', filename=f'uploads/{filename}') 
-        
+
+        foto_url = url_for('static', filename=f'uploads/{filename}')
+
         # 2. Lógica de DB
-        
+
         novo_animal = Animal(
-            nome=form.nome.data, # type: ignore
-            especie=form.especie.data, # type: ignore
-            idade=form.idade.data, # type: ignore
-            foto_url=foto_url, # type: ignore
+            nome=form.nome.data,  # type: ignore
+            especie=form.especie.data,  # type: ignore
+            idade=form.idade.data,  # type: ignore
+            foto_url=foto_url,  # type: ignore
             ong_id=current_user.id  # type: ignore
         )
         db.session.add(novo_animal)
         db.session.commit()
-        
+
         # O url_for agora precisa do prefixo do Blueprint: 'main.exibir_pets'
         return redirect(url_for('main.exibir_pet', pet_id=novo_animal.id))
 
@@ -75,8 +76,8 @@ def exibir_pet(pet_id):
     # 1. Cria a consulta para buscar o Animal pelo ID
     # .scalar_one_or_none() é a forma elegante de buscar um único resultado
     stmt = select(Animal).filter_by(id=pet_id)
-    pet = db.session.execute(stmt).scalar_one_or_none() 
-    
+    pet = db.session.execute(stmt).scalar_one_or_none()
+
     # 2. Verifica se o pet existe
     if pet is None:
         # Retorna um erro 404 (Não Encontrado) padrão do Flask
@@ -90,32 +91,32 @@ def exibir_pet(pet_id):
 def login():
     # Se o usuário já estiver autenticado, redirecione para a home
     if current_user.is_authenticated:
-        return redirect(url_for('main.index')) 
+        return redirect(url_for('main.index'))
 
     form = LoginForm()
-    
+
     if form.validate_on_submit():
         # 1. Busca o usuário (ONG) pelo email
         stmt = select(Ong).filter_by(email=form.email.data)
         ong = db.session.execute(stmt).scalar_one_or_none()
-        
+
         # 2. Verifica se a ONG existe E se a senha está correta
         if ong is None or not ong.check_password(form.password.data):
             flash('E-mail ou senha inválidos', 'danger')
             return redirect(url_for('main.login'))
-        
+
         # 3. Login bem-sucedido
         login_user(ong, remember=form.remember_me.data)
         flash('Login realizado com sucesso!', 'success')
-        
+
         # Redireciona para a próxima página (se houver, senão para a home)
         return redirect(url_for('main.index'))
-        
+
     return render_template('login_form.html', form=form)
 
-    
+
 @main_bp.route('/logout')
-@login_required # Garante que só usuários logados possam deslogar
+@login_required  # Garante que só usuários logados possam deslogar
 def logout():
     logout_user()
     flash('Você foi desconectado.', 'info')
@@ -129,45 +130,24 @@ def cadastro_ong():
         return redirect(url_for('main.index'))
 
     form = CadastroOngForm()
-    
+
     if form.validate_on_submit():
-        # 1. Criação da imagem
-        foto_url = None
-        if form.foto.data: # Verifica se um arquivo foi enviado
-            f = form.foto.data 
-            original_filename = secure_filename(f.filename)
-            file_ext = os.path.splitext(original_filename)[1]
-            filename = str(uuid.uuid4()) + file_ext
-
-            caminho_salvamento = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-
-            # Processamento da imagem
-            imagem = Image.open(f)
-            tamanho_maximo = (600, 600)
-            
-            imagem.thumbnail(tamanho_maximo) 
-            imagem.save(caminho_salvamento, optimize=True, quality=85) # Compressão um pouco menor
-            
-            foto_url = url_for('static', filename=f'uploads/{filename}')
-
         # 2. Cria o novo objeto ONG
         nova_ong = Ong(
-            nome_fantasia=form.nome_fantasia.data, # type: ignore
-            cnpj=form.cnpj.data, # type: ignore
-            email=form.email.data, # type: ignore
-            telefone=form.telefone.data, # type: ignore
-            foto_url=foto_url, # type: ignore
+            nome_fantasia=form.nome_fantasia.data,  # type: ignore
+            cnpj=form.cnpj.data,  # type: ignore
+            email=form.email.data,  # type: ignore
         )
-        
+
         nova_ong.set_password(form.password.data)
-        
+
         db.session.add(nova_ong)
         db.session.commit()
-        
-        login_user(nova_ong) 
+
+        login_user(nova_ong)
 
         flash('ONG cadastrada com sucesso! Você pode fazer login.', 'success')
-        
+
         # Redireciona para a página de login
         return redirect(url_for('main.login'))
 
@@ -178,7 +158,8 @@ def cadastro_ong():
 @main_bp.route('/ong/<int:ong_id>')
 def exibir_ong(ong_id):
     # busca a ONG pelo id
-    ong = db.session.query(Ong).get(ong_id)  # ou use .filter_by(id=ong_id).first()
+    # ou use .filter_by(id=ong_id).first()
+    ong = db.session.query(Ong).get(ong_id)
     if ong is None:
         abort(404)
     return render_template('exibir_ong.html', ong=ong)

@@ -14,9 +14,7 @@ class Ong(db.Model, UserMixin):
     cnpj = db.Column(db.String(14), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     senha_hash = db.Column(db.String(128))
-    foto_url = db.Column(db.String(255), nullable=True)
-    telefone = db.Column(db.String(20), nullable=False)
-    
+
     # Relacionamento com Animal
     animais = db.relationship('Animal', backref='ong_proprietaria', lazy=True)
 
@@ -25,6 +23,7 @@ class Ong(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.senha_hash, password)
+
 
 class Usuario(db.Model, UserMixin):
     __tablename__ = 'usuarios'
@@ -39,6 +38,7 @@ class Usuario(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.senha_hash, password)
 
+
 class Animal(db.Model):
     __tablename__ = 'animais'
     id = db.Column(db.Integer, primary_key=True)
@@ -48,9 +48,12 @@ class Animal(db.Model):
     foto_url = db.Column(db.String(80), nullable=False)
     ong_id = db.Column(db.Integer, db.ForeignKey('ongs.id'), nullable=False)
 
+
 class PedidoAdocao(db.Model):
     __tablename__ = 'pedidos_adocao'
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.DateTime, default=datetime.utcnow)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    animal_id = db.Column(db.Integer, db.ForeignKey('animais.id'), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey(
+        'usuarios.id'), nullable=False)
+    animal_id = db.Column(db.Integer, db.ForeignKey(
+        'animais.id'), nullable=False)

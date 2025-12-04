@@ -204,6 +204,7 @@ main {
 .red-background {
     background-color: #ff5757;
     margin-top: 3rem;
+    color: white;
     font-family: 'Times New Roman', Times, serif;
 }
 

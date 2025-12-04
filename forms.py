@@ -6,44 +6,49 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 
 class RegistrarPetForm(FlaskForm):
-    nome = StringField('Nome do Animal', [validators.DataRequired(), validators.Length(min=2, max=50)])
+    nome = StringField('Nome do Animal', [
+                       validators.DataRequired(), validators.Length(min=2, max=50)])
     especie = StringField('Espécie', [validators.DataRequired()])
-    idade = IntegerField('Idade', [validators.Optional(), validators.NumberRange(min=0, max=30)])
-    
+    idade = IntegerField(
+        'Idade', [validators.Optional(), validators.NumberRange(min=0, max=30)])
+
     foto = FileField('Foto do Animal', validators=[
-        FileRequired(message='É obrigatório enviar uma foto.'), # Garante que o arquivo foi enviado
-        FileAllowed(['jpg', 'png', 'jpeg'], 'Apenas imagens JPG, PNG ou JPEG são permitidas.') # Restringe os tipos de arquivo
+        # Garante que o arquivo foi enviado
+        FileRequired(message='É obrigatório enviar uma foto.'),
+        # Restringe os tipos de arquivo
+        FileAllowed(['jpg', 'png', 'jpeg'],
+                    'Apenas imagens JPG, PNG ou JPEG são permitidas.')
     ])
 
-    
     submit = SubmitField('Registrar Pet')
 
+
 class LoginForm(FlaskForm):
-    email = StringField('E-mail', [validators.DataRequired(), validators.Email()])
+    email = StringField(
+        'E-mail', [validators.DataRequired(), validators.Email()])
     password = PasswordField('Senha', [validators.DataRequired()])
     remember_me = BooleanField('Lembrar de mim')
     submit = SubmitField('Entrar')
 
 
 class CadastroOngForm(FlaskForm):
-    nome_fantasia = StringField('Nome Fantasia da ONG', [validators.DataRequired(), validators.Length(min=3, max=100)])
-    cnpj = StringField('CNPJ', [validators.DataRequired(), validators.Length(min=14, max=14, message="O CNPJ deve ter 14 dígitos.")])
-    email = StringField('E-mail', [validators.DataRequired(), validators.Email()])
-    
-    telefone = StringField('Telefone de Contato', [validators.DataRequired(), validators.Length(min=10, max=20, message="Telefone inválido.")])
-    foto = FileField('Logo da ONG (Opcional)', validators=[
-        FileAllowed(['jpg', 'png', 'jpeg'], 'Apenas imagens JPG, PNG ou JPEG são permitidas.')
-    ])
+    nome_fantasia = StringField('Nome Fantasia da ONG', [
+                                validators.DataRequired(), validators.Length(min=3, max=100)])
+    cnpj = StringField('CNPJ', [validators.DataRequired(), validators.Length(
+        min=14, max=14, message="O CNPJ deve ter 14 dígitos.")])
+    email = StringField(
+        'E-mail', [validators.DataRequired(), validators.Email()])
 
     password = PasswordField('Senha', [
         validators.DataRequired(),
-        validators.Length(min=6, message="A senha deve ter pelo menos 6 caracteres."),
+        validators.Length(
+            min=6, message="A senha deve ter pelo menos 6 caracteres."),
         EqualTo('confirm', message='As senhas não coincidem.')
     ])
     confirm = PasswordField('Repita a Senha')
-    
+
     submit = SubmitField('Cadastrar ONG')
-    
+
     # VALIDADOR PERSONALIZADO: Garante que o CNPJ ou E-mail não estão duplicados
     def validate_cnpj(self, cnpj):
         from models import Ong
