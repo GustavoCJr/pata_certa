@@ -1,5 +1,6 @@
 // script.js (coloque em /static/script/script.js)
-// recomendado: incluir no layout com <script src="{{ url_for('static', filename='script/script.js') }}" defer></script>
+// incluir no layout com:
+// <script src="{{ url_for('static', filename='script/script.js') }}" defer></script>
 
 (async function verificarLogin() {
   const endpoint = (typeof ROUTE_API_LOGGED !== 'undefined')
@@ -29,3 +30,22 @@
     console.error('Erro ao verificar login:', err);
   }
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("img.pet-img").forEach(img => {
+    const fallback = "/static/images/silhueta.png";
+
+    const src = img.getAttribute("src");
+
+    if (!src || src.trim() === "") {
+      img.src = fallback;
+      return;
+    }
+
+    img.addEventListener("error", () => {
+      if (img.src !== fallback) {
+        img.src = fallback;
+      }
+    });
+  });
+});
