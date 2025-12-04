@@ -8,9 +8,9 @@ from views.api_routes import api_bp
 from seed import seed_data
 from models import Animal, Ong, Usuario, PedidoAdocao
 
-
+"""
 def cleanup_development_environment():
-    """Remove o DB e o conteúdo dos uploads para um estado limpo de desenvolvimento."""
+    '''Remove o DB e o conteúdo dos uploads para um estado limpo de desenvolvimento.'''
     db_path = Config.DATABASE_PATH
     upload_dir = Config.UPLOAD_FOLDER
     instance_dir = Config.BASE_DIR / 'instance'  # O caminho da pasta instance
@@ -31,8 +31,7 @@ def cleanup_development_environment():
     # Garante que a pasta static/uploads exista
     if not os.path.exists(upload_dir):
         os.makedirs(upload_dir)
-
-
+"""
 
 
 def create_app(config_class=Config):
@@ -60,10 +59,10 @@ app = create_app()
 
 if __name__ == '__main__':
     is_reloader = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
-
+    """
     if not is_reloader:
         cleanup_development_environment()
-
+    """
     app = create_app()
 
     login_manager.init_app(app)
@@ -81,6 +80,3 @@ if __name__ == '__main__':
             seed_data(app)
     
     app.run(debug=True)
-    
-with app.app_context():
-    db.create_all()
