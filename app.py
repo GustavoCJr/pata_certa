@@ -1,13 +1,17 @@
 from flask import Flask
 import os
 from extensions import db, login_manager
-from config import Config
+from config import Config, DevelopmentConfig, ProductionConfig
 import shutil
 from views.main import main_bp
 from views.api_routes import api_bp
 from seed import seed_data
 from models import Animal, Ong, Usuario, PedidoAdocao
 
+config_mapping = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig
+}
 
 def cleanup_development_environment():
     """Remove o DB e o conteúdo dos uploads para um estado limpo de desenvolvimento."""
@@ -33,7 +37,10 @@ def cleanup_development_environment():
         os.makedirs(upload_dir)
 
 
-def create_app(config_class=Config):
+def create_app(config_name='development'):
+
+    config_class = config_mapping.get(config_name, Config)
+
     app = Flask(__name__)
     app.config.from_object(config_class)
 
@@ -52,17 +59,8 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp)
 
-    return app
 
-
-if __name__ == '__main__':
-    is_reloader = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
-
-    if not is_reloader:
-        cleanup_development_environment()
-
-    app = create_app()
-
+    # TESTANDO JOGAR O LOGIN PARA CA
     login_manager.init_app(app)
 
     @login_manager.user_loader
@@ -72,9 +70,22 @@ if __name__ == '__main__':
             return ong
         return None
 
-    if not is_reloader:
+    return app
+
+
+if __name__ == '__main__':
+    is_reloader = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
+
+    env_name = os.environ.get('FLASK_ENV') or 'development'
+
+    if not is_reloader and env_name == 'development':
+        cleanup_development_environment()
+
+    app = create_app(env_name)
+
+    if not is_reloader and env_name == 'development':
         with app.app_context():
             db.create_all()
             # seed_data(app)
 
-    app.run(debug=True)
+    app.run(debug=(env_name == 'development'))
